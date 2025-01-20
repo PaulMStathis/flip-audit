@@ -3,7 +3,54 @@ function testFileAccess() {
     const file = DriveApp.getFileById(fileId);
     Logger.log('File Name: %s', file.getName());
   }
+
+ /////////////////////////////////////////////////////////////////////////////////
+  // Return text extracted from the specified file.
+  // @param {string} fileId
+  // @returns {string} txtContent
+  function getTextFromFile(fileId){
+    var parentFolderId = getParentFolderId(fileId)
+    var sourceFile = DriveApp.getFileById(fileId);
   
+    // Get the parent folder of the source file.
+    var parentFolder = sourceFile.getParents().next();
+  
+    const destFolder = Drive.Files.get(parentFolderId, { "supportsAllDrives": true });
+    
+    const newFile = {
+      "fileId": fileId,
+      "parents": [
+        destFolder
+      ]
+    };
+    const args = {
+      "resource": {
+        "parents": [
+          destFolder
+        ],
+        "name": "temp",
+        "mimeType": "application/vnd.google-apps.document",
+      },
+      "supportsAllDrives": true
+    };
+  
+    // Create a .doc file in drive to hold the contents.
+    const docFile = Drive.Files.copy(newFile, fileId, args);
+    const xxx = drive.files.copy()
+    const docContent = DocumentApp.openById(docFile.getId());
+  
+    // Extract the contents to a .txt file.
+    var txtContent = docContent.getBody().getText();
+    txtContent = getStringClean(txtContent)
+    // Create a text file containing the body.
+    createTextFileInSameFolder(fileId,txtContent)
+    // Clean up.
+    //deleteFileById(fileId)
+    deleteFilesByName(parentFolderId, "temp")
+    return txtContent
+  }
+  ///////////////////////////////////////////////////////////////////////////////
+
   ////////////////////////////////////////////////////////////////////
    // Get the ID of a child folder within a specified parent folder.
    //
@@ -91,55 +138,6 @@ function testFileAccess() {
     return ''; // Return an empty string if no file is found
   }
   //////////////////////////////////////////////////////////////////////////
-  
-  /////////////////////////////////////////////////////////////////////////////////
-  // Return text extracted from the specified file.
-  // @param {string} fileId
-  // @returns {string} txtContent
-  function getTextFromFile(fileId){
-    var parentFolderId = getParentFolderId(fileId)
-    var sourceFile = DriveApp.getFileById(fileId);
-  
-    // Get the parent folder of the source file.
-    var parentFolder = sourceFile.getParents().next();
-  
-    const destFolder = Drive.Files.get(parentFolderId, { "supportsAllDrives": true });
-    
-    const newFile = {
-      "fileId": fileId,
-      "parents": [
-        destFolder
-      ]
-    };
-    const args = {
-      "resource": {
-        "parents": [
-          destFolder
-        ],
-        "name": "temp",
-        "mimeType": "application/vnd.google-apps.document",
-      },
-      "supportsAllDrives": true
-    };
-  
-    //const docFileID = newFileID(fileId, RECEIPT_DOC_DIR)
-  
-    // Create a .doc file in drive to hold the contents.
-    const docFile = Drive.Files.copy(newFile, fileId, args);
-    const xxx = drive.files.copy()
-    const docContent = DocumentApp.openById(docFile.getId());
-  
-    // Extract the contents to a .txt file.
-    var txtContent = docContent.getBody().getText();
-    txtContent = getStringClean(txtContent)
-    // Create a text file containing the body.
-    createTextFileInSameFolder(fileId,txtContent)
-    // Clean up.
-    //deleteFileById(fileId)
-    deleteFilesByName(parentFolderId, "temp")
-    return txtContent
-  }
-  ///////////////////////////////////////////////////////////////////////////////
   
   ///////////////////////////////////////////////////////////////////////////////
   // Create a new file in the same Drive folder as the specified file ID, 
