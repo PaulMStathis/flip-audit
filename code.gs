@@ -26,6 +26,7 @@ function processReceipt(receiptFileID) {
       // TEST
       function testProcessReceipt(){
         processReceipt(Home_Depot_JPG);
+        return
         processReceipt(Inspectagator_JPG);
         processReceipt(Dollar_General_JPG);
         processReceipt(Tropic_Granite_Binary_PDF);

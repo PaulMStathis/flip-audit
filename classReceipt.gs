@@ -29,18 +29,12 @@ class Receipt {
   }
 }
 
-function testGetTextFromFile(){
-  getTextFromFile(Dollar_General_JPG)
-  getTextFromFile(FPL_JPG)
-  getTextFromFile(Home_Depot_JPG)
-  getTextFromFile(Inspectagator_JPG)
-  getTextFromFile(Palm_Bay_PDF)
-  getTextFromFile(Palm_Bay_JPG)
-  getTextFromFile(Sunstate_PNG)
-  getTextFromFile(Tropic_Granite_PDF)
-}
-
 function testParseReceipt(){
+  var theReceipt
+  theReceipt = '1G49ldUZf6UxRna60x_s3f6uRw323wTTV2q0Ncpi4_a0' //doc https://docs.google.com/document/d/1G49ldUZf6UxRna60x_s3f6uRw323wTTV2q0Ncpi4_a0/edit?tab=t.0
+  theReceipt = '1u_dXsnopuF2kZ0Frqpfbn3l6fA6twfY7' //txt https://drive.google.com/drive/folders/1BNb2ZWLPedk5Svx9-Goo1QH6MWYGQIa8
+  parseReceipt(theReceipt)
+  return
   var theReceipt;
   var theReceiptFileId;
   theReceiptFileId = Palm_Bay_JPG

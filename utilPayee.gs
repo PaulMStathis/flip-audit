@@ -7,9 +7,11 @@ function getPayeeName(theInputString){
   payeeX=0
   while ((THE_PAYEES[payeeX] != null) && (thePayee == "")) {
     if (stringIsInText(theInputString, THE_PAYEES[payeeX])) {
-      return THE_PAYEES[payeeX] }
+      thePayee = THE_PAYEES[payeeX]
+      }
     payeeX++
   }
+  return thePayee
 }
       // TEST
       const SUBJECT_STRINGS = [

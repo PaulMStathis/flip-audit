@@ -18,9 +18,54 @@ const RECEIPT_TXT_DIR = getChildFolderID(RECEIPTS_DIR, "txt")
       function testReceiptDocTxt(){
         Logger.log ('RECEIPTS_DIR = ' + DriveApp.getFileById(RECEIPTS_DIR))
         Logger.log ('Home_Depot_JPG = ' + DriveApp.getFileById(Home_Depot_JPG))
-        const docFileID = newFileID(Home_Depot_JPG, RECEIPT_DOC_DIR)
+        const docFileID = getDocFile(Home_Depot_JPG)
         Logger.log ('docFileID = ' + DriveApp.getFileById(docFileID))
       }
+
+/////////////////////////////////////////////////////////////////////////////////
+function getDocFile(fileId){
+  var parentFolderId = getParentFolderId(fileId)
+  var sourceFile = DriveApp.getFileById(fileId);
+
+  // Get the parent folder of the source file.
+  var parentFolder = sourceFile.getParents().next();
+
+  const destFolder = Drive.Files.get(RECEIPT_DOC_DIR, { "supportsAllDrives": true });
+  //const destFolder = Drive.Files.get(parentFolderId, { "supportsAllDrives": true });
+  
+  const newFile = {
+    "fileId": fileId,
+    "parents": [
+      destFolder
+    ]
+  };
+  const args = {
+    "resource": {
+      "parents": [
+        destFolder
+      ],
+      "name": "newfile.doc",
+      "mimeType": "application/vnd.google-apps.document",
+    },
+    "supportsAllDrives": true
+  };
+
+  // Create a .doc file in drive to hold the contents.
+  const docFile = Drive.Files.copy(newFile, fileId, args);
+  const docContent = DocumentApp.openById(docFile.getId());
+
+  // Extract the contents to a .txt file.
+  var txtContent = docContent.getBody().getText();
+  txtContent = getStringClean(txtContent)
+  // Create a text file containing the body.
+  createTextFileInSameFolder(fileId,txtContent)
+  // Clean up.
+  //deleteFileById(fileId)
+  //deleteFilesByName(parentFolderId, "temp")
+  return docFile.getId()
+}
+///////////////////////////////////////////////////////////////////////////////
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Create instances of CreditCard and store them in a static array
